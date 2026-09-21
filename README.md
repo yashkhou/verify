@@ -31,9 +31,9 @@ Requires Node.js 20+.
 Published packages:
 
 ```bash
-npm install yashkhou-artifact-verify@0.1.0
-npm install yashkhou-repo-verify@0.1.1
-npm install yashkhou-action-guard@0.1.1
+npm install yashkhou-artifact-verify
+npm install yashkhou-repo-verify
+npm install yashkhou-action-guard
 ```
 
 ## Starter failure benchmark
@@ -43,7 +43,7 @@ npm install yashkhou-action-guard@0.1.1
 ## Artifact Verify
 
 ```bash
-npx yashkhou-artifact-verify@0.1.0 check report.docx --rules artifact-verify.json
+npx yashkhou-artifact-verify check report.docx --rules artifact-verify.json
 ```
 
 Example rules:
@@ -78,7 +78,7 @@ Create `repo-verify.json`:
 Then run:
 
 ```bash
-npx yashkhou-repo-verify@0.1.1 verify
+npx yashkhou-repo-verify verify
 ```
 
 Evidence is written to `.repo-verify/evidence.json` and `.repo-verify/evidence.md`.

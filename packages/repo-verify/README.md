@@ -3,7 +3,7 @@
 Independent executable acceptance gates and evidence for AI-generated code.
 
 ```bash
-npm install yashkhou-repo-verify@0.1.1
+npm install yashkhou-repo-verify
 ```
 
 Create `repo-verify.json`:
@@ -24,7 +24,7 @@ Create `repo-verify.json`:
 Then run:
 
 ```bash
-npx yashkhou-repo-verify@0.1.1 verify
+npx yashkhou-repo-verify verify
 ```
 
 Evidence is written to `.repo-verify/evidence.json` and `.repo-verify/evidence.md` with an evidence digest for the checked state.
