@@ -1,5 +1,10 @@
 # Yashkhou Verify
 
+[![CI](https://github.com/yashkhou/verify/actions/workflows/ci.yml/badge.svg)](https://github.com/yashkhou/verify/actions/workflows/ci.yml)
+[![npm: Artifact Verify](https://img.shields.io/npm/v/yashkhou-artifact-verify)](https://www.npmjs.com/package/yashkhou-artifact-verify)
+[![npm: Repo Verify](https://img.shields.io/npm/v/yashkhou-repo-verify)](https://www.npmjs.com/package/yashkhou-repo-verify)
+[![npm: Action Guard](https://img.shields.io/npm/v/yashkhou-action-guard)](https://www.npmjs.com/package/yashkhou-action-guard)
+
 **AI made creation cheap. Proof is now the bottleneck.**
 
 Live: https://yashkhou.github.io/verify/
@@ -27,8 +32,8 @@ Published packages:
 
 ```bash
 npm install yashkhou-artifact-verify@0.1.0
-npm install yashkhou-repo-verify@0.1.0
-npm install yashkhou-action-guard@0.1.0
+npm install yashkhou-repo-verify@0.1.1
+npm install yashkhou-action-guard@0.1.1
 ```
 
 ## Starter failure benchmark
@@ -73,7 +78,7 @@ Create `repo-verify.json`:
 Then run:
 
 ```bash
-npx yashkhou-repo-verify@0.1.0 verify
+npx yashkhou-repo-verify@0.1.1 verify
 ```
 
 Evidence is written to `.repo-verify/evidence.json` and `.repo-verify/evidence.md`.
@@ -102,10 +107,16 @@ Every event is appended to a hash-chained local journal. Irreversible actions ar
 
 Yashkhou Verify is deliberately model-agnostic. The verifier should not need to trust the model that produced the work. Prefer deterministic checks, executable tests and source evidence; use probabilistic judgment only where deterministic verification is impossible.
 
+See [Maintainer automation](docs/MAINTAINER_AUTOMATION.md) for the intended AI-assisted maintenance loop and trust boundary.
+
 ## Status
 
 This is an early open-source release. Treat it as verification infrastructure, not a guarantee of correctness. See each package and the launch notes in `docs/` for current scope and known limits.
 
 See also: [Agent verification checklist](docs/agent-verification-checklist.md).
+
+## Community and security
+
+Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request. Security-sensitive reports should follow [SECURITY.md](SECURITY.md), and project spaces follow [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
 
 MIT licensed.

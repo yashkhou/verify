@@ -1,6 +1,6 @@
 {
   "name": "yashkhou-repo-verify",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Independent executable acceptance gates and evidence for AI-generated code.",
   "type": "module",
   "bin": {
