@@ -1,0 +1,17 @@
+{
+  "name": "@yashkhou/action-guard",
+  "version": "0.1.0",
+  "description": "Transaction safety primitives for AI agent actions: approval, idempotency, rollback and compensation.",
+  "type": "module",
+  "bin": {
+    "action-guard": "./src/cli.mjs"
+  },
+  "exports": "./src/index.mjs",
+  "scripts": {
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT"
+}

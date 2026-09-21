@@ -1,0 +1,18 @@
+{
+  "name": "yashkhou-verify",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Verification and transaction safety infrastructure for AI work.",
+  "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "test": "npm test -w @yashkhou/artifact-verify && npm test -w @yashkhou/repo-verify && npm test -w @yashkhou/action-guard",
+    "smoke": "node examples/smoke.mjs",
+    "site": "node site/server.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "maxChangedFiles": 80,
+  "allowedPaths": ["packages/", "site/", "docs/", "examples/", ".github/", "README.md", "LICENSE", "package.json", "package-lock.json", "repo-verify.json", ".gitignore"],
+  "forbiddenPatterns": ["TODO_PRODUCTION", "HARDCODED_SECRET"],
+  "commands": [
+    { "name": "tests", "run": "npm test", "timeoutMs": 120000 },
+    { "name": "smoke", "run": "npm run smoke", "timeoutMs": 30000 }
+  ]
+}

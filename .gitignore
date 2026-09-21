@@ -1,0 +1,7 @@
+node_modules/
+.DS_Store
+*.log
+.repo-verify/
+.artifact-verify/
+.action-guard/
+site/.cache/

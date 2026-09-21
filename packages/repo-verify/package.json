@@ -1,0 +1,17 @@
+{
+  "name": "@yashkhou/repo-verify",
+  "version": "0.1.0",
+  "description": "Independent executable acceptance gates for AI-generated code.",
+  "type": "module",
+  "bin": {
+    "repo-verify": "./src/cli.mjs"
+  },
+  "exports": "./src/index.mjs",
+  "scripts": {
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT"
+}

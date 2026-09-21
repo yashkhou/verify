@@ -1,0 +1,20 @@
+{
+  "name": "@yashkhou/artifact-verify",
+  "version": "0.1.0",
+  "description": "Deterministic CI checks for AI-generated XLSX, PPTX, DOCX and PDF artifacts.",
+  "type": "module",
+  "bin": {
+    "artifact-verify": "./src/cli.mjs"
+  },
+  "exports": "./src/index.mjs",
+  "dependencies": {
+    "adm-zip": "^0.6.1"
+  },
+  "scripts": {
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT"
+}
