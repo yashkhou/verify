@@ -119,4 +119,6 @@ See also: [Agent verification checklist](docs/agent-verification-checklist.md).
 
 Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request. Security-sensitive reports should follow [SECURITY.md](SECURITY.md), and project spaces follow [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
 
+Maintenance plans live in [docs/ROADMAP.md](docs/ROADMAP.md), and the release process is documented in [docs/RELEASING.md](docs/RELEASING.md).
+
 MIT licensed.
