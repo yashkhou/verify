@@ -98,4 +98,6 @@ Yashkhou Verify is deliberately model-agnostic. The verifier should not need to 
 
 This is an early open-source release. Treat it as verification infrastructure, not a guarantee of correctness. See each package and the launch notes in `docs/` for current scope and known limits.
 
+See also: [Agent verification checklist](docs/agent-verification-checklist.md).
+
 MIT licensed.
