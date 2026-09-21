@@ -30,7 +30,7 @@ Requires Node.js 20+.
 ## Artifact Verify
 
 ```bash
-./packages/artifact-verify/src/cli.mjs check report.docx --rules artifact-verify.json
+./packages/artifact-verify/src/cli.js check report.docx --rules artifact-verify.json
 ```
 
 Example rules:
@@ -65,7 +65,7 @@ Create `repo-verify.json`:
 Then run:
 
 ```bash
-./packages/repo-verify/src/cli.mjs verify
+./packages/repo-verify/src/cli.js verify
 ```
 
 Evidence is written to `.repo-verify/evidence.json` and `.repo-verify/evidence.md`.
