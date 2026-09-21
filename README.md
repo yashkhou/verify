@@ -23,6 +23,14 @@ npm test
 
 Requires Node.js 20+.
 
+Published packages:
+
+```bash
+npm install yashkhou-artifact-verify@0.1.0
+npm install yashkhou-repo-verify@0.1.0
+npm install yashkhou-action-guard@0.1.0
+```
+
 ## Starter failure benchmark
 
 `npm run benchmark` plants five transparent failure/recovery cases across the stack. The current suite contains all five: a DOCX placeholder, an XLSX `#REF!`, a forbidden code primitive, an unapproved irreversible action, and a compensating recovery. It is deliberately small and reproducible; it is not presented as a model leaderboard or representative failure-rate study.
@@ -30,7 +38,7 @@ Requires Node.js 20+.
 ## Artifact Verify
 
 ```bash
-./packages/artifact-verify/src/cli.js check report.docx --rules artifact-verify.json
+npx yashkhou-artifact-verify@0.1.0 check report.docx --rules artifact-verify.json
 ```
 
 Example rules:
@@ -65,7 +73,7 @@ Create `repo-verify.json`:
 Then run:
 
 ```bash
-./packages/repo-verify/src/cli.js verify
+npx yashkhou-repo-verify@0.1.0 verify
 ```
 
 Evidence is written to `.repo-verify/evidence.json` and `.repo-verify/evidence.md`.

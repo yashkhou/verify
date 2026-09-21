@@ -3,7 +3,8 @@
 Deterministic CI checks for AI-generated XLSX, PPTX, DOCX and PDF artifacts.
 
 ```bash
-npx yashkhou-artifact-verify check report.docx --rules artifact-verify.json
+npm install yashkhou-artifact-verify@0.1.0
+npx yashkhou-artifact-verify@0.1.0 check report.docx --rules artifact-verify.json
 ```
 
 Example rules:

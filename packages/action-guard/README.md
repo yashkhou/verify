@@ -2,6 +2,10 @@
 
 Transaction safety primitives for AI agent actions: approval, idempotency, rollback, compensation and hash-chained local receipts.
 
+```bash
+npm install yashkhou-action-guard@0.1.0
+```
+
 ```js
 import { createTransactionManager, ActionClass } from "yashkhou-action-guard";
 
