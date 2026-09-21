@@ -2,6 +2,8 @@
 
 **AI made creation cheap. Proof is now the bottleneck.**
 
+Live: https://yashkhou.github.io/verify/
+
 Yashkhou Verify is an open-source suite for verifying AI-generated work and making agent actions safer to execute.
 
 - **Artifact Verify** — deterministic checks for generated `.xlsx`, `.pptx`, `.docx` and `.pdf` files.
@@ -20,6 +22,10 @@ npm test
 ```
 
 Requires Node.js 20+.
+
+## Starter failure benchmark
+
+`npm run benchmark` plants five transparent failure/recovery cases across the stack. The current suite contains all five: a DOCX placeholder, an XLSX `#REF!`, a forbidden code primitive, an unapproved irreversible action, and a compensating recovery. It is deliberately small and reproducible; it is not presented as a model leaderboard or representative failure-rate study.
 
 ## Artifact Verify
 

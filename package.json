@@ -10,9 +10,13 @@
   "scripts": {
     "test": "npm test -w @yashkhou/artifact-verify && npm test -w @yashkhou/repo-verify && npm test -w @yashkhou/action-guard",
     "smoke": "node examples/smoke.mjs",
+    "benchmark": "node benchmarks/run.mjs",
     "site": "node site/server.mjs"
   },
   "engines": {
     "node": ">=20"
+  },
+  "devDependencies": {
+    "adm-zip": "^0.6.1"
   }
 }
