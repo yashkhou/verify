@@ -1,10 +1,10 @@
 {
-  "name": "@yashkhou/action-guard",
+  "name": "yashkhou-action-guard",
   "version": "0.1.0",
   "description": "Transaction safety primitives for AI agent actions: approval, idempotency, rollback and compensation.",
   "type": "module",
   "bin": {
-    "action-guard": "./src/cli.mjs"
+    "action-guard": "src/cli.js"
   },
   "exports": "./src/index.mjs",
   "scripts": {
@@ -13,5 +13,31 @@
   "engines": {
     "node": ">=20"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "keywords": [
+    "ai",
+    "agents",
+    "transactions",
+    "rollback",
+    "idempotency",
+    "safety",
+    "automation"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yashkhou/verify.git",
+    "directory": "packages/action-guard"
+  },
+  "homepage": "https://github.com/yashkhou/verify/tree/main/packages/action-guard#readme",
+  "bugs": {
+    "url": "https://github.com/yashkhou/verify/issues"
+  },
+  "files": [
+    "src",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
 }

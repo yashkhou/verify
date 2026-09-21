@@ -8,7 +8,7 @@
     "packages/*"
   ],
   "scripts": {
-    "test": "npm test -w @yashkhou/artifact-verify && npm test -w @yashkhou/repo-verify && npm test -w @yashkhou/action-guard",
+    "test": "npm test -w yashkhou-artifact-verify && npm test -w yashkhou-repo-verify && npm test -w yashkhou-action-guard",
     "smoke": "node examples/smoke.mjs",
     "benchmark": "node benchmarks/run.mjs",
     "site": "node site/server.mjs"

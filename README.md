@@ -73,7 +73,7 @@ Evidence is written to `.repo-verify/evidence.json` and `.repo-verify/evidence.m
 ## Action Guard
 
 ```js
-import { createTransactionManager, ActionClass } from "@yashkhou/action-guard";
+import { createTransactionManager, ActionClass } from "yashkhou-action-guard";
 
 const tx = createTransactionManager({
   approve: async ({ action }) => action.metadata?.preapproved === true
