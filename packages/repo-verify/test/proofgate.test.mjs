@@ -66,3 +66,31 @@ test("supports explicit paths excluded from forbidden-pattern scans", async () =
   });
   assert.equal(report.ok, true);
 });
+
+
+test("runs structured argv commands without a shell", async () => {
+  const dir = repoFixture();
+  const report = await verifyRepository(dir, {
+    requireArgvCommands: true,
+    commands: [{ name: "syntax", argv: ["node", "--check", "src/app.js"] }]
+  });
+  assert.equal(report.ok, true);
+  assert.equal(report.commands[0].command, "node --check src/app.js");
+});
+
+test("blocks shell commands when argv-only policy is enabled", async () => {
+  const dir = repoFixture();
+  const report = await verifyRepository(dir, {
+    requireArgvCommands: true,
+    commands: [{ name: "shell", run: "node --check src/app.js" }]
+  });
+  assert.equal(report.ok, false);
+  assert.match(report.commands[0].stderr, /requireArgvCommands/);
+});
+
+test("does not execute shell syntax embedded in baseline refs", async () => {
+  const dir = repoFixture();
+  const marker = path.join(dir, "BASELINE_INJECTION");
+  await verifyRepository(dir, { baseline: "HEAD; touch BASELINE_INJECTION" });
+  assert.equal(fs.existsSync(marker), false);
+});

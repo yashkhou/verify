@@ -3,9 +3,10 @@
   "allowedPaths": ["packages/", "site/", "docs/", "examples/", "benchmarks/", ".github/", "README.md", "LICENSE", "CONTRIBUTING.md", "SECURITY.md", "CODE_OF_CONDUCT.md", "CHANGELOG.md", "package.json", "package-lock.json", "repo-verify.json", ".gitignore"],
   "forbiddenPatterns": ["TODO_PRODUCTION", "HARDCODED_SECRET"],
   "scanIgnorePaths": ["repo-verify.json", ".repo-verify/"],
+  "requireArgvCommands": true,
   "commands": [
-    { "name": "tests", "run": "npm test", "timeoutMs": 120000 },
-    { "name": "benchmark", "run": "npm run benchmark", "timeoutMs": 30000 },
-    { "name": "smoke", "run": "npm run smoke", "timeoutMs": 30000 }
+    { "name": "tests", "argv": ["npm", "test"], "timeoutMs": 120000 },
+    { "name": "benchmark", "argv": ["npm", "run", "benchmark"], "timeoutMs": 30000 },
+    { "name": "smoke", "argv": ["npm", "run", "smoke"], "timeoutMs": 30000 }
   ]
 }

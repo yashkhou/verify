@@ -14,9 +14,10 @@ Create `repo-verify.json`:
   "allowedPaths": ["src/", "test/"],
   "forbiddenPatterns": ["eval("],
   "scanIgnorePaths": ["repo-verify.json"],
+  "requireArgvCommands": true,
   "commands": [
-    { "name": "test", "run": "npm test" },
-    { "name": "build", "run": "npm run build" }
+    { "name": "test", "argv": ["npm", "test"] },
+    { "name": "build", "argv": ["npm", "run", "build"] }
   ]
 }
 ```
@@ -27,6 +28,6 @@ Then run:
 npx yashkhou-repo-verify verify
 ```
 
-Evidence is written to `.repo-verify/evidence.json` and `.repo-verify/evidence.md` with an evidence digest for the checked state.
+Evidence is written to `.repo-verify/evidence.json` and `.repo-verify/evidence.md` with an evidence digest for the checked state. Prefer structured `argv` commands; legacy `run` strings invoke a shell and can be disabled with `requireArgvCommands`.
 
 Repository: https://github.com/yashkhou/verify

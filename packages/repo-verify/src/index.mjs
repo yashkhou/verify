@@ -5,17 +5,17 @@ import { spawnSync } from "node:child_process";
 
 const clip = (value, limit = 6000) => String(value ?? "").slice(-limit);
 
-function shell(command, cwd, timeoutMs = 120000) {
+function execute(command, args, cwd, timeoutMs = 120000, useShell = false) {
   const started = Date.now();
-  const run = spawnSync(command, {
+  const run = spawnSync(command, args, {
     cwd,
-    shell: true,
+    shell: useShell,
     encoding: "utf8",
     timeout: timeoutMs,
     env: { ...process.env, CI: "1" }
   });
   return {
-    command,
+    command: useShell ? command : [command, ...args].join(" "),
     ok: run.status === 0 && !run.error,
     status: run.status,
     signal: run.signal,
@@ -25,8 +25,29 @@ function shell(command, cwd, timeoutMs = 120000) {
   };
 }
 
-function git(command, cwd) {
-  const run = shell(`git ${command}`, cwd, 15000);
+function shell(command, cwd, timeoutMs = 120000) {
+  return execute(command, [], cwd, timeoutMs, true);
+}
+
+function argv(commandArgs, cwd, timeoutMs = 120000) {
+  if (!Array.isArray(commandArgs) || commandArgs.length === 0
+      || commandArgs.some(value => typeof value !== "string")) {
+    return {
+      command: "",
+      ok: false,
+      status: null,
+      signal: null,
+      durationMs: 0,
+      stdout: "",
+      stderr: "argv must be a non-empty array of strings"
+    };
+  }
+  const [command, ...args] = commandArgs;
+  return execute(command, args, cwd, timeoutMs, false);
+}
+
+function git(args, cwd) {
+  const run = argv(["git", ...args], cwd, 15000);
   return run.ok ? run.stdout.trim() : "";
 }
 
@@ -35,11 +56,11 @@ function check(id, ok, detail, evidence = {}) {
 }
 function changedFiles(cwd, baseline) {
   const base = baseline || "HEAD";
-  const committed = git(`diff --name-only ${base}...HEAD`, cwd)
+  const committed = git(["diff", "--name-only", `${base}...HEAD`], cwd)
     .split("\n").filter(Boolean);
-  const working = git("diff --name-only HEAD", cwd).split("\n").filter(Boolean);
-  const staged = git("diff --cached --name-only HEAD", cwd).split("\n").filter(Boolean);
-  const untracked = git("ls-files --others --exclude-standard", cwd).split("\n").filter(Boolean);
+  const working = git(["diff", "--name-only", "HEAD"], cwd).split("\n").filter(Boolean);
+  const staged = git(["diff", "--cached", "--name-only", "HEAD"], cwd).split("\n").filter(Boolean);
+  const untracked = git(["ls-files", "--others", "--exclude-standard"], cwd).split("\n").filter(Boolean);
   return [...new Set([...committed, ...working, ...staged, ...untracked])];
 }
 
@@ -83,8 +104,8 @@ export async function verifyRepository(cwd, spec = {}) {
   const root = path.resolve(cwd);
   const checks = [];
   const files = changedFiles(root, spec.baseline);
-  const commit = git("rev-parse HEAD", root);
-  const branch = git("branch --show-current", root);
+  const commit = git(["rev-parse", "HEAD"], root);
+  const branch = git(["branch", "--show-current"], root);
 
   if (spec.maxChangedFiles != null) {
     checks.push(check("scope.maxChangedFiles", files.length <= spec.maxChangedFiles,
@@ -106,10 +127,36 @@ export async function verifyRepository(cwd, spec = {}) {
 
   const commands = [];
   for (const item of spec.commands ?? []) {
-    const run = shell(item.run, root, item.timeoutMs ?? 120000);
-    commands.push({ name: item.name ?? item.run, ...run });
-    checks.push(check(`command:${item.name ?? item.run}`, run.ok,
-      run.ok ? `Passed in ${run.durationMs}ms` : `Failed with status ${run.status}`, run));
+    const label = item.name ?? (Array.isArray(item.argv) ? item.argv.join(" ") : item.run ?? "invalid");
+    let run;
+    if (Array.isArray(item.argv)) {
+      run = argv(item.argv, root, item.timeoutMs ?? 120000);
+    } else if (spec.requireArgvCommands === true) {
+      run = {
+        command: String(item.run ?? ""),
+        ok: false,
+        status: null,
+        signal: null,
+        durationMs: 0,
+        stdout: "",
+        stderr: "Shell command blocked because requireArgvCommands is enabled"
+      };
+    } else if (typeof item.run === "string" && item.run.length > 0) {
+      run = shell(item.run, root, item.timeoutMs ?? 120000);
+    } else {
+      run = {
+        command: "",
+        ok: false,
+        status: null,
+        signal: null,
+        durationMs: 0,
+        stdout: "",
+        stderr: "Command must define argv or run"
+      };
+    }
+    commands.push({ name: label, ...run });
+    checks.push(check(`command:${label}`, run.ok,
+      run.ok ? `Passed in ${run.durationMs}ms` : (run.stderr || `Failed with status ${run.status}`), run));
   }
 
   const probes = [];
