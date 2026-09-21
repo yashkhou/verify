@@ -68,9 +68,10 @@ Create `repo-verify.json`:
   "maxChangedFiles": 30,
   "allowedPaths": ["src/", "test/"],
   "forbiddenPatterns": ["eval("],
+  "requireArgvCommands": true,
   "commands": [
-    { "name": "test", "run": "npm test" },
-    { "name": "build", "run": "npm run build" }
+    { "name": "test", "argv": ["npm", "test"] },
+    { "name": "build", "argv": ["npm", "run", "build"] }
   ]
 }
 ```
@@ -81,7 +82,7 @@ Then run:
 npx yashkhou-repo-verify verify
 ```
 
-Evidence is written to `.repo-verify/evidence.json` and `.repo-verify/evidence.md`.
+Evidence is written to `.repo-verify/evidence.json` and `.repo-verify/evidence.md`. Structured `argv` commands avoid invoking a shell; legacy `run` strings remain available unless `requireArgvCommands` is enabled.
 
 ## Action Guard
 
