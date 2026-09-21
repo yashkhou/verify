@@ -39,12 +39,17 @@ function changedFiles(cwd, baseline) {
     .split("\n").filter(Boolean);
   const working = git("diff --name-only HEAD", cwd).split("\n").filter(Boolean);
   const staged = git("diff --cached --name-only HEAD", cwd).split("\n").filter(Boolean);
-  return [...new Set([...committed, ...working, ...staged])];
+  const untracked = git("ls-files --others --exclude-standard", cwd).split("\n").filter(Boolean);
+  return [...new Set([...committed, ...working, ...staged, ...untracked])];
 }
 
-function scanForbidden(cwd, files, patterns) {
+function scanForbidden(cwd, files, patterns, ignorePaths = []) {
   const hits = [];
   for (const file of files) {
+    const ignored = ignorePaths.some(prefix =>
+      file === prefix || file.startsWith(prefix.endsWith("/") ? prefix : `${prefix}/`)
+    );
+    if (ignored) continue;
     const absolute = path.join(cwd, file);
     if (!fs.existsSync(absolute) || fs.statSync(absolute).isDirectory()) continue;
     let text;
@@ -94,7 +99,7 @@ export async function verifyRepository(cwd, spec = {}) {
   }
 
   if (spec.forbiddenPatterns?.length) {
-    const hits = scanForbidden(root, files, spec.forbiddenPatterns);
+    const hits = scanForbidden(root, files, spec.forbiddenPatterns, spec.scanIgnorePaths ?? []);
     checks.push(check("code.forbiddenPatterns", hits.length === 0,
       hits.length ? `${hits.length} forbidden pattern hit(s)` : "No forbidden patterns found", { hits }));
   }

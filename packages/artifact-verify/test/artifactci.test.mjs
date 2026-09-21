@@ -25,3 +25,34 @@ test("fails placeholder content", () => {
   const report = verifyArtifact(file, {});
   assert.equal(report.ok, false);
 });
+
+
+test("fails unsupported artifact types", () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "artifact-verify-"));
+  const file = path.join(dir, "demo.txt");
+  fs.writeFileSync(file, "plain text");
+  const report = verifyArtifact(file, {});
+  assert.equal(report.ok, false);
+  assert.equal(report.checks.find(check => check.id === "file.supported").status, "fail");
+});
+
+test("detects cached Excel formula errors", () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "artifact-verify-"));
+  const file = path.join(dir, "demo.xlsx");
+  const zip = new AdmZip();
+  zip.addFile("xl/workbook.xml", Buffer.from("<workbook/>"));
+  zip.addFile("xl/worksheets/sheet1.xml", Buffer.from('<worksheet><c t="e"><v>#REF!</v></c></worksheet>'));
+  zip.writeZip(file);
+  const report = verifyArtifact(file, {});
+  assert.equal(report.ok, false);
+  assert.match(report.checks.find(check => check.id === "xlsx.formulaErrors").detail, /#REF!/);
+});
+
+test("fails a corrupt Office container without throwing", () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "artifact-verify-"));
+  const file = path.join(dir, "broken.docx");
+  fs.writeFileSync(file, "not a zip file");
+  const report = verifyArtifact(file, {});
+  assert.equal(report.ok, false);
+  assert.equal(report.checks.some(check => check.id === "office.open" && check.status === "fail"), true);
+});

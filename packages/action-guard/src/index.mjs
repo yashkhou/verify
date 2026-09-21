@@ -8,8 +8,18 @@ export const ActionClass = Object.freeze({
   IRREVERSIBLE: "irreversible"
 });
 
+function canonicalize(value) {
+  if (Array.isArray(value)) return value.map(canonicalize);
+  if (value && typeof value === "object") {
+    return Object.fromEntries(
+      Object.keys(value).sort().map(key => [key, canonicalize(value[key])])
+    );
+  }
+  return value;
+}
+
 function stable(value) {
-  return JSON.stringify(value, Object.keys(value || {}).sort());
+  return JSON.stringify(canonicalize(value));
 }
 
 function digest(prev, event) {

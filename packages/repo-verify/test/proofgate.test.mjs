@@ -34,3 +34,35 @@ test("fails forbidden patterns", async () => {
   const report = await verifyRepository(dir, { forbiddenPatterns: ["eval("] });
   assert.equal(report.ok, false);
 });
+
+
+test("fails changes outside allowed paths", async () => {
+  const dir = repoFixture();
+  fs.writeFileSync(path.join(dir, "README.md"), "unexpected scope\n");
+  const report = await verifyRepository(dir, { allowedPaths: ["src/"] });
+  assert.equal(report.ok, false);
+  const scope = report.checks.find(check => check.id === "scope.allowedPaths");
+  assert.equal(scope.status, "fail");
+  assert.deepEqual(scope.evidence.outside, ["README.md"]);
+});
+
+test("captures a failing acceptance command", async () => {
+  const dir = repoFixture();
+  const report = await verifyRepository(dir, {
+    commands: [{ name: "intentional-failure", run: 'node -e "process.exit(7)"' }]
+  });
+  assert.equal(report.ok, false);
+  const command = report.commands.find(item => item.name === "intentional-failure");
+  assert.equal(command.status, 7);
+});
+
+
+test("supports explicit paths excluded from forbidden-pattern scans", async () => {
+  const dir = repoFixture();
+  fs.writeFileSync(path.join(dir, "rules.json"), '{"forbiddenPatterns":["BLOCK_ME"]}\n');
+  const report = await verifyRepository(dir, {
+    forbiddenPatterns: ["BLOCK_ME"],
+    scanIgnorePaths: ["rules.json"]
+  });
+  assert.equal(report.ok, true);
+});
