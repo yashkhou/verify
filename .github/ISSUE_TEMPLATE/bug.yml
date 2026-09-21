@@ -1,0 +1,33 @@
+name: Bug report
+description: Report a reproducible verification, evidence, or recovery failure.
+title: "[bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for reporting a bug. Please include the smallest reproducible case you can.
+  - type: dropdown
+    id: package
+    attributes:
+      label: Package
+      options:
+        - yashkhou-artifact-verify
+        - yashkhou-repo-verify
+        - yashkhou-action-guard
+        - Repository / CI / docs
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: Commands, files, or code needed to reproduce the behavior.
+      placeholder: Paste a minimal reproduction or link to a small public repository.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected and observed behavior
+    validations:
+      required: true

@@ -1,0 +1,38 @@
+name: Publish npm packages
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+      - run: npm ci
+      - run: npm test
+      - run: npm run benchmark
+      - run: npm run smoke
+      - name: Publish changed package versions
+        shell: bash
+        run: |
+          set -euo pipefail
+          for dir in packages/*; do
+            name="$(node -p "require('./${dir}/package.json').name")"
+            version="$(node -p "require('./${dir}/package.json').version")"
+            published="$(npm view "$name" version 2>/dev/null || true)"
+            if [ "$version" = "$published" ]; then
+              echo "Skipping $name@$version (already published)"
+              continue
+            fi
+            echo "Publishing $name@$version"
+            (cd "$dir" && npm publish --provenance --access public)
+          done
