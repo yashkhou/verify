@@ -7,7 +7,7 @@
 
 **AI made creation cheap. Proof is now the bottleneck.**
 
-Live: https://yashkhou.github.io/verify/
+Project page: https://yashkhou.com/projects/verify
 
 Yashkhou Verify is an open-source suite for verifying AI-generated work and making agent actions safer to execute.
 
