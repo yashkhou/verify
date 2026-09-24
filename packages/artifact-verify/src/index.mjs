@@ -33,13 +33,32 @@ function inspectOffice(buffer, ext) {
     [...x.matchAll(/<v>(#(?:REF!|DIV\/0!|VALUE!|NAME\?|N\/A|NUM!|NULL!))<\/v>/g)]
       .map(m => m[1])
   );
+  const brokenRelationships = [];
+  for (const entry of entries.filter(e => e.entryName.endsWith(".rels"))) {
+    const source = entry.entryName === "_rels/.rels"
+      ? ""
+      : entry.entryName.replace(/\/_rels\/([^/]+)\.rels$/, "/$1");
+    const baseDir = source ? path.posix.dirname(source) : "";
+    const relXml = entry.getData().toString("utf8");
+    for (const match of relXml.matchAll(/<Relationship\b[^>]*\bTarget=["']([^"']+)["'][^>]*>/g)) {
+      const tag = match[0];
+      const target = match[1];
+      if (/\bTargetMode=["']External["']/.test(tag) || target.startsWith("#")) continue;
+      const cleanTarget = target.split("#", 1)[0].split("?", 1)[0];
+      const resolved = cleanTarget.startsWith("/")
+        ? path.posix.normalize(cleanTarget.slice(1))
+        : path.posix.normalize(path.posix.join(baseDir, cleanTarget));
+      if (!names.has(resolved)) brokenRelationships.push({ relationshipPart: entry.entryName, target, resolved });
+    }
+  }
   return {
     text,
     names,
     xml,
     expectedRoot,
     rootPresent: names.has(expectedRoot),
-    formulaErrors
+    formulaErrors,
+    brokenRelationships
   };
 }
 
@@ -47,7 +66,8 @@ function inspectPdf(buffer) {
   const raw = buffer.toString("latin1");
   const pageCount = (raw.match(/\/Type\s*\/Page(?!s)\b/g) || []).length;
   const strings = [...raw.matchAll(/\(([^()]*)\)\s*Tj/g)].map(m => m[1]);
-  return { pageCount, text: normalizeText(strings.join(" ")) };
+  const trailerPresent = /startxref\s+\d+\s+%%EOF\s*$/.test(raw);
+  return { pageCount, text: normalizeText(strings.join(" ")), trailerPresent };
 }
 export function verifyArtifact(filePath, rules = {}) {
   const absolute = path.resolve(filePath);
@@ -73,6 +93,8 @@ export function verifyArtifact(filePath, rules = {}) {
     text = pdf.text;
     checks.push(result("pdf.header", buffer.subarray(0, 5).toString() === "%PDF-" ? "pass" : "fail",
       "PDF header signature"));
+    checks.push(result("pdf.trailer", pdf.trailerPresent ? "pass" : "fail",
+      pdf.trailerPresent ? "Found startxref and terminal %%EOF" : "Missing valid startxref / terminal %%EOF trailer"));
     if (rules.minPages != null) checks.push(result("pdf.minPages",
       pdf.pageCount >= rules.minPages ? "pass" : "fail", `${pdf.pageCount} pages`));
     if (rules.maxPages != null) checks.push(result("pdf.maxPages",
@@ -87,6 +109,11 @@ export function verifyArtifact(filePath, rules = {}) {
     text = office.text;
     checks.push(result("office.structure", office.rootPresent ? "pass" : "fail",
       office.rootPresent ? `Found ${office.expectedRoot}` : `Missing ${office.expectedRoot}`));
+    checks.push(result("office.relationships", office.brokenRelationships.length === 0 ? "pass" : "fail",
+      office.brokenRelationships.length === 0
+        ? "Internal package relationships resolve"
+        : `Broken internal relationships: ${office.brokenRelationships.map(rel => `${rel.relationshipPart} -> ${rel.target}`).join(", ")}`,
+      { brokenRelationships: office.brokenRelationships }));
     if (ext === ".xlsx") checks.push(result("xlsx.formulaErrors",
       office.formulaErrors.length === 0 ? "pass" : "fail",
       office.formulaErrors.length ? `Formula errors: ${office.formulaErrors.join(", ")}` : "No cached Excel formula errors found"));

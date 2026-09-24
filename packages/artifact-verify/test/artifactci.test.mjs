@@ -56,3 +56,37 @@ test("fails a corrupt Office container without throwing", () => {
   assert.equal(report.ok, false);
   assert.equal(report.checks.some(check => check.id === "office.open" && check.status === "fail"), true);
 });
+
+
+test("detects broken internal Office relationships", () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "artifact-verify-"));
+  const file = path.join(dir, "broken-rel.docx");
+  const zip = new AdmZip();
+  zip.addFile("word/document.xml", Buffer.from("<w:document><w:t>Verified</w:t></w:document>"));
+  zip.addFile("word/_rels/document.xml.rels", Buffer.from('<Relationships><Relationship Id="rId1" Type="image" Target="media/missing.png"/></Relationships>'));
+  zip.writeZip(file);
+  const report = verifyArtifact(file, { forbidPlaceholders: false });
+  const check = report.checks.find(item => item.id === "office.relationships");
+  assert.equal(check.status, "fail");
+  assert.equal(check.evidence.brokenRelationships[0].resolved, "word/media/missing.png");
+});
+
+test("allows external Office relationships without requiring a package entry", () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "artifact-verify-"));
+  const file = path.join(dir, "external-rel.docx");
+  const zip = new AdmZip();
+  zip.addFile("word/document.xml", Buffer.from("<w:document><w:t>Verified</w:t></w:document>"));
+  zip.addFile("word/_rels/document.xml.rels", Buffer.from('<Relationships><Relationship Id="rId1" Type="hyperlink" Target="https://example.org" TargetMode="External"/></Relationships>'));
+  zip.writeZip(file);
+  const report = verifyArtifact(file, { forbidPlaceholders: false });
+  assert.equal(report.checks.find(item => item.id === "office.relationships").status, "pass");
+});
+
+test("requires a PDF startxref and terminal EOF trailer", () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "artifact-verify-"));
+  const file = path.join(dir, "broken.pdf");
+  fs.writeFileSync(file, "%PDF-1.7\n1 0 obj\n<<>>\nendobj\n");
+  const report = verifyArtifact(file, { forbidPlaceholders: false });
+  assert.equal(report.checks.find(item => item.id === "pdf.header").status, "pass");
+  assert.equal(report.checks.find(item => item.id === "pdf.trailer").status, "fail");
+});
