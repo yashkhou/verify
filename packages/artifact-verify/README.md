@@ -23,3 +23,5 @@ The command exits non-zero when a check fails and can emit a JSON evidence repor
 Current scope is intentionally deterministic: package structure, required/forbidden text, placeholder detection, cached Excel formula errors and basic PDF checks. It does not claim full semantic or visual correctness.
 
 Repository: https://github.com/yashkhou/verify
+
+Artifact Verify also validates core Office package roots, internal `.rels` targets, cached Excel formula errors, and basic PDF trailer structure (`startxref` + terminal `%%EOF`) without claiming full rendering or workbook recalculation.
